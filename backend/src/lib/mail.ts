@@ -1,6 +1,4 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import axios from "axios";
 
 interface SendMailRequest {
   to: string;
@@ -8,21 +6,28 @@ interface SendMailRequest {
   html: string;
 }
 
-export async function sendMail({
-  to,
-  subject,
-  html,
-}: SendMailRequest) {
-  const { data, error } = await resend.emails.send({
-    from: "HubSpot Tickets <onboarding@resend.dev>",
-    to,
-    subject,
-    html,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
+export async function sendMail({ to, subject, html }: SendMailRequest) {
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      sender: {
+        name: process.env.BREVO_SENDER_NAME,
+        email: process.env.BREVO_SENDER_EMAIL,
+      },
+      to: [
+        {
+          email: to,
+        },
+      ],
+      subject,
+      htmlContent: html,
+    },
+    {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }
+  );
 }
