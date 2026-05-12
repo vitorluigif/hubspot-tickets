@@ -1,4 +1,17 @@
-import axios from "axios";
+import nodemailer from "nodemailer";
+
+const account = await nodemailer.createTestAccount();
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.ethereal.email",
+  port: 587,
+  secure: false,
+
+  auth: {
+    user: account.user,
+    pass: account.pass,
+  },
+});
 
 interface SendMailRequest {
   to: string;
@@ -6,28 +19,21 @@ interface SendMailRequest {
   html: string;
 }
 
-export async function sendMail({ to, subject, html }: SendMailRequest) {
-  await axios.post(
-    "https://api.brevo.com/v3/smtp/email",
-    {
-      sender: {
-        name: process.env.BREVO_SENDER_NAME,
-        email: process.env.BREVO_SENDER_EMAIL,
-      },
-      to: [
-        {
-          email: to,
-        },
-      ],
-      subject,
-      htmlContent: html,
-    },
-    {
-      headers: {
-        "api-key": process.env.BREVO_API_KEY,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    }
-  );
+export async function sendMail({
+  to,
+  subject,
+  html,
+}: SendMailRequest) {
+  const info = await transporter.sendMail({
+    from: '"HubSpot Tickets" <no-reply@hubspot-tickets.com>',
+    to,
+    subject,
+    html,
+  });
+
+  const previewUrl = nodemailer.getTestMessageUrl(info);
+
+  return {
+    previewUrl,
+  };
 }

@@ -23,24 +23,28 @@ export class CreateTwoFactorCodeService {
       },
     });
 
-    await sendMail({
+    const mail = await sendMail({
       to: user.email,
       subject: "Seu código de verificação",
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 24px;">
+        <div style="font-family: Arial, sans-serif;">
           <h2>HubSpot Tickets</h2>
-          <p>Olá${user.name ? `, ${user.name}` : ""}.</p>
-          <p>Use o código abaixo para concluir seu login:</p>
-          <strong style="display: block; font-size: 32px; margin: 24px 0;">
+
+          <p>Seu código de verificação:</p>
+
+          <strong style="font-size: 32px;">
             ${code}
           </strong>
-          <p>Este código expira em 10 minutos.</p>
+
+          <p>Expira em 10 minutos.</p>
         </div>
-      `,
+        `,
     });
 
     return {
+      code,
       expiresAt,
+      previewUrl: mail.previewUrl,
     };
   }
 }

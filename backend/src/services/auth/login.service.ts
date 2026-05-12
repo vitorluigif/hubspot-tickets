@@ -28,6 +28,7 @@ export class LoginService {
     return {
       requires2FA: true,
       userId: user.id,
+      previewUrl: twoFactor.previewUrl,
       expiresAt: twoFactor.expiresAt,
     };
   }
