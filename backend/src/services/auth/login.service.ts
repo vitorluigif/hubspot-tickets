@@ -29,6 +29,7 @@ export class LoginService {
       requires2FA: true,
       userId: user.id,
       previewUrl: twoFactor.previewUrl,
+      devCode: twoFactor.previewUrl ? undefined : twoFactor.code,
       expiresAt: twoFactor.expiresAt,
     };
   }

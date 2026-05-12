@@ -23,28 +23,36 @@ export class CreateTwoFactorCodeService {
       },
     });
 
-    const mail = await sendMail({
-      to: user.email,
-      subject: "Seu código de verificação",
-      html: `
-        <div style="font-family: Arial, sans-serif;">
-          <h2>HubSpot Tickets</h2>
+    let previewUrl: string | false | undefined;
 
-          <p>Seu código de verificação:</p>
+    try {
+      const mail = await sendMail({
+        to: user.email,
+        subject: "Seu código de verificação",
+        html: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>HubSpot Tickets</h2>
 
-          <strong style="font-size: 32px;">
-            ${code}
-          </strong>
+            <p>Seu código de verificação:</p>
 
-          <p>Expira em 10 minutos.</p>
-        </div>
+            <strong style="font-size: 32px;">
+              ${code}
+            </strong>
+
+            <p>Expira em 10 minutos.</p>
+          </div>
         `,
-    });
+      });
+
+      previewUrl = mail.previewUrl;
+    } catch (error) {
+      console.error("2FA email send failed:", error);
+    }
 
     return {
       code,
       expiresAt,
-      previewUrl: mail.previewUrl,
+      previewUrl,
     };
   }
 }

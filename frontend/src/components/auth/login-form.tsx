@@ -17,6 +17,7 @@ export function LoginForm() {
   const [step, setStep] = useState<"credentials" | "2fa">("credentials");
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [devCode, setDevCode] = useState("");
 
   async function handleLogin(event: FormEvent) {
     event.preventDefault();
@@ -27,7 +28,8 @@ export function LoginForm() {
       const data = await login({ email, password });
 
       setUserId(data.userId);
-      setPreviewUrl(data.previewUrl);
+      setPreviewUrl(data.previewUrl ?? "");
+      setDevCode(data.devCode ?? "");
       setStep("2fa");
 
       toast.success("Código 2FA enviado!", {
@@ -58,10 +60,10 @@ export function LoginForm() {
       localStorage.setItem("hubspot_tickets_token", data.token);
       localStorage.setItem("hubspot_tickets_user", JSON.stringify(data.user));
 
-toast.success("Login efetuado com sucesso!", {
-  description: "Redirecionando para seus tickets.",
-  duration: 10000,
-});
+      toast.success("Login efetuado com sucesso!", {
+        description: "Redirecionando para seus tickets.",
+        duration: 10000,
+      });
 
       router.push("/tickets");
     } catch {
@@ -95,6 +97,13 @@ toast.success("Login efetuado com sucesso!", {
             >
               Abrir preview do e-mail
             </a>
+          )}
+
+
+          {devCode && (
+            <div className="rounded-2xl bg-zinc-100 px-4 py-3 text-sm text-zinc-800">
+            Código de demonstração: <strong>{devCode}</strong>
+            </div>
           )}
 
           <div>

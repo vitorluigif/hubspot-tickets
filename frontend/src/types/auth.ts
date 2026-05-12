@@ -6,7 +6,8 @@ export interface LoginRequest {
 export interface LoginResponse {
   requires2FA: true;
   userId: string;
-  previewUrl: string;
+  previewUrl?: string;
+  devCode?: string;
   expiresAt: string;
 }
 
