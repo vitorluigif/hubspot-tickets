@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import { authRoutes } from "./routes/auth.routes.js";
 import { ticketsRoutes } from "./routes/hubspot/tickets/index.js";
+import type { Request, Response } from "express";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/health", (_, res) => {
+app.get("/health", (_: Request, res: Response) => {
   return res.json({ status: "ok" });
 });
 
